@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LightBDD.Notification;
 using LightBDD.Results;
 using NUnit.Framework;
@@ -43,5 +44,6 @@ namespace LightBDD
 				? ResultStatus.Ignored
 				: ResultStatus.Failed;
 		}
+
 	}
 }

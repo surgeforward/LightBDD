@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace LightBDD.Execution.Implementation
 {
@@ -51,7 +53,9 @@ namespace LightBDD.Execution.Implementation
         {
             _executor.Execute(_scenario, _stepsConverter.Convert(steps));
         }
-    }
+
+		public Task RunAsync(params Func<Task>[] steps) => _executor.ExecuteAsync(_scenario, _stepsConverter.Convert(steps));
+	}
 
     [DebuggerStepThrough]
     internal class ScenarioBuilder<TContext> : IScenarioBuilder<TContext>
@@ -78,5 +82,7 @@ namespace LightBDD.Execution.Implementation
         {
             _executor.Execute(_scenario, _stepsConverter.Convert(_context, steps));
         }
-    }
+
+		public Task RunAsync(params Func<TContext, Task>[] steps) => _executor.ExecuteAsync(_scenario, _stepsConverter.Convert(_context, steps));
+	}
 }

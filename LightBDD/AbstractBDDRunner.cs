@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using LightBDD.Execution;
 using LightBDD.Execution.Implementation;
 using LightBDD.Notification;
@@ -334,6 +335,16 @@ namespace LightBDD
             NewScenario(GetScenarioMethod()).Run(steps);
         }
 
+		/// <summary>
+		/// SImilar to run Ducky
+		/// </summary>
+		/// <param name="steps"></param>
+		/// <returns></returns>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public Task RunScenarioAsync(params Func<Task>[] steps)
+        {
+            return NewScenario(GetScenarioMethod()).RunAsync(steps);
+        }
         /// <summary>
         /// Runs test scenario by executing given steps in specified order.<br/>
         /// If given step throws, other are not executed.<br/>

@@ -7,7 +7,7 @@ namespace LightBDD.Execution.Implementation
     {
         [ThreadStatic]
         private static ExecutionContext _instance;
-        private IStep _currentStep;
+        private IStepInfo _currentStep;
 
         public ExecutionContext(IProgressNotifier progressNotifier, int totalStepCount)
         {
@@ -18,7 +18,7 @@ namespace LightBDD.Execution.Implementation
         public IProgressNotifier ProgressNotifier { get; private set; }
         public int TotalStepCount { get; private set; }
 
-        public IStep CurrentStep
+        public IStepInfo CurrentStep
         {
             get
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace LightBDD.Execution
 {
@@ -48,6 +49,13 @@ namespace LightBDD.Execution
         /// </summary>
         /// <param name="steps">List of steps to execute in order.</param>
         void Run(params Action[] steps);
+
+		/// <summary>
+		/// SImilar to run but async Ducky
+		/// </summary>
+		/// <param name="steps"></param>
+        Task RunAsync(params Func<Task>[] steps);
+
         /// <summary>
         /// Completes scenario build process and runs given steps in specified order.<br/>
         /// If any step throws, other are not executed and exception is propagated to calling method.<br/>
@@ -117,6 +125,13 @@ namespace LightBDD.Execution
         /// </summary>
         /// <param name="steps">List of steps to execute in order.</param>
         void Run(params Action<TContext>[] steps);
+
+		/// <summary>
+		/// SImilar to run but async Ducky
+		/// </summary>
+		/// <param name="steps"></param>
+        Task RunAsync(params Func<TContext, Task>[] steps);
+
         /// <summary>
         /// Completes scenario build process and executes given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
         /// If any step throws, other are not executed and exception is propagated to calling method.<br/>

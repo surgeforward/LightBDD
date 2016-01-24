@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LightBDD.Notification;
 using LightBDD.Results;
 using LightBDD.UnitTests.Helpers;
@@ -78,5 +79,28 @@ namespace LightBDD.NUnit.UnitTests
             var ex = Assert.Throws<InconclusiveException>(() => _subject.RunScenario(Step_with_inconclusive_assertion));
             _progressNotifier.AssertWasCalled(n => n.NotifyScenarioFinished(Arg<IScenarioResult>.Matches(r => r.Status == ResultStatus.Ignored && r.StatusDetails == "Step 1: " + ex.Message)));
         }
+
+		[Test]
+		public async Task Should_run_async_tests() {
+			await _subject.RunScenarioAsync(async_step_1, async_step_2_with_assetion);
+
+            var result = _subject.Result.Scenarios.Single();
+            Assert.That(result.Name, Is.EqualTo("Should run async tests"));
+            Assert.That(result.Status, Is.EqualTo(ResultStatus.Passed));
+            Assert.That(result.Steps.Count(), Is.EqualTo(2));
+            AssertStep(result.Steps, 1, "async step 1", ResultStatus.Passed);
+            AssertStep(result.Steps, 2, "async step 2 with assertion", ResultStatus.Passed);
+		}
+
+
+		static bool step_1_finished = false;
+		public async Task async_step_1() {
+			await Task.Yield();
+			step_1_finished = true;
+		}
+		public async Task async_step_2_with_assetion() {
+			await Task.Yield();
+			Assert.True(step_1_finished);
+		}
     }
 }

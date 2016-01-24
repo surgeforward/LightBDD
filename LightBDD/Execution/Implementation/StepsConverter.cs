@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using LightBDD.Execution.Implementation.Parameters;
 using LightBDD.Results;
 
@@ -51,6 +52,17 @@ namespace LightBDD.Execution.Implementation
             var ctx = new ConversionContext(_metadataProvider);
             return steps.Select(step => CreateStep(step, step.Method, ctx));
         }
+        public IEnumerable<IAsyncStep> Convert(IEnumerable<Func<Task>> steps)
+        {
+            var ctx = new ConversionContext(_metadataProvider);
+            return steps.Select(step => CreateStep(step, step.Method, ctx));
+        }
+
+        public IEnumerable<IAsyncStep> Convert<TContext>(TContext context, IEnumerable<Func<TContext, Task>> steps)
+        {
+            var ctx = new ConversionContext(_metadataProvider);
+            return steps.Select(step => CreateStep(() => step(context), step.Method, ctx));
+        }
 
         public IEnumerable<IStep> Convert<TContext>(TContext context, IEnumerable<Action<TContext>> steps)
         {
@@ -75,6 +87,12 @@ namespace LightBDD.Execution.Implementation
             var stepName = _metadataProvider.GetStepName(stepMethod);
             var stepTypeName = _metadataProvider.GetStepTypeNameFromFormattedStepName(ref stepName);
             return new Step(step, conversionContext.NormalizeStepTypeName(stepTypeName), stepName, conversionContext.NextStepNumber(), _mapExceptionToStatus);
+        }
+        private AsyncStep CreateStep(Func<Task> step, MethodInfo stepMethod, ConversionContext conversionContext)
+        {
+            var stepName = _metadataProvider.GetStepName(stepMethod);
+            var stepTypeName = _metadataProvider.GetStepTypeNameFromFormattedStepName(ref stepName);
+            return new AsyncStep(step, conversionContext.NormalizeStepTypeName(stepTypeName), stepName, conversionContext.NextStepNumber(), _mapExceptionToStatus);
         }
 
         private IStep CreateParameterizedStep(Expression<Action<StepType>> stepExpression, ConversionContext conversionContext)
@@ -136,5 +154,6 @@ namespace LightBDD.Execution.Implementation
                 throw new ArgumentException("Steps accepting ref or out parameters are not supported: " + stepExpression);
             return methodExpression;
         }
-    }
+
+	}
 }
